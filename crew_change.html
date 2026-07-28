@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Αλλαγή Πληρώματος</title>
+<title>Αλλαγή Πληρώματος - ΚΟΡΦΟΣ 2026</title>
 
   <style>
     * {
@@ -697,6 +697,25 @@ body.jotform-open #formFrame {
   background: #fff !important;
   border-radius: 0 !important;
 }
+
+    /* BANNER ΔΙΟΡΓΑΝΩΤΗ */
+    #organizerBanner {
+      display: block;
+      width: 680px;
+      max-width: 92%;
+      height: auto;
+      max-height: none;
+      object-fit: contain;
+      margin: 20px auto 24px auto;
+    }
+
+    @media screen and (max-width: 768px) {
+      #organizerBanner {
+        width: 100%;
+        max-width: 100%;
+        margin: 14px auto 18px auto;
+      }
+    }
   </style>
 </head>
 <body>
@@ -709,6 +728,9 @@ body.jotform-open #formFrame {
         <div class="hero-content">
           <div class="logo-row">
             <img id="eventLogo" class="event-logo" src="" alt="Regatta Entry Management System" />
+          </div>
+          <div id="organizerBannerBox" style="display:none; text-align:center; margin:8px auto 16px auto;">
+            <img id="organizerBanner" src="" alt="Διοργανωτής Όμιλος" style="max-width:100%; max-height:120px; object-fit:contain;">
           </div>
 
          <div class="app-title">ΑΛΛΑΓΗ ΠΛΗΡΩΜΑΤΟΣ</div>
@@ -735,11 +757,11 @@ body.jotform-open #formFrame {
 <label style="display:block; margin:18px auto 12px auto; padding:14px 16px; max-width:660px; background:#fff8d8; border:2px solid #d39b00; border-radius:8px; font-size:16px; font-weight:700; line-height:1.55; text-align:left; color:#2f241d;">
   <input type="checkbox" id="acceptTermsCheck" style="width:22px; height:22px; margin-right:10px; vertical-align:middle;">
   Έχω διαβάσει και αποδέχομαι την
-  <a href="https://docs.google.com/document/d/1_ThpUPcy-w1-D5hScVCcKZ2csmjs6_m-mIkEYNY9c5I/edit?usp=sharing" target="_blank" rel="noopener noreferrer" style="color:#0d5e92; font-weight:800; text-decoration:underline;">
+  <a href="https://docs.google.com/document/d/1aP3O1rDXvF34k3bMuvAyAGDb0cy8iMFkDiL-hEfUqxI/edit?tab=t.0" target="_blank" rel="noopener noreferrer" style="color:#0d5e92; font-weight:800; text-decoration:underline;">
     Πολιτική Απορρήτου
   </a>
   και τους
-  <a href="https://docs.google.com/document/d/1Btn0eMNSZotVyH3n7RETC3ur8lZ4V_2I/edit?usp=sharing&ouid=115039995651229449950&rtpof=true&sd=true" target="_blank" rel="noopener noreferrer" style="color:#0d5e92; font-weight:800; text-decoration:underline;">
+  <a href="https://docs.google.com/document/d/1S6QrNvvRq2drWWLfrsZxzOuM89Rf-lY0IznZcwzVUz4/edit?tab=t.0" target="_blank" rel="noopener noreferrer" style="color:#0d5e92; font-weight:800; text-decoration:underline;">
     Όρους Χρήσης
   </a>.
 </label>
@@ -908,28 +930,64 @@ body.jotform-open #formFrame {
     // 1. ΒΑΣΙΚΕΣ ΡΥΘΜΙΣΕΙΣ ΕΦΑΡΜΟΓΗΣ
     // =========================================
 
- const CONFIG = {
- EVENT_TITLE: "",
-  SETTINGS_ENDPOINT: "https://script.google.com/macros/s/AKfycbzjSJuN1YtHMyZkuV3XKeLJxT4ufe0xBhdVbjehFj9v_tzONu7eRAr3WEqBdLa3H0YJ/exec?action=settings&settings=1WNfPoNfxjvfZCwnKOpOJYUH_G_2xa06E9U3zG4BJhWw",
-BOAT_LOOKUP_URL: "https://script.google.com/macros/s/AKfycbz_DEBymT_KEkYxVPA3iIGlIkKoLUNDhowmpMl-q16_Hdn7dFP1kKQB5ccrkT51bxQj/exec",
-  PERSON_LOOKUP_URL: "https://script.google.com/macros/s/AKfycbw-zgZZeHRC6S5_f1xGkTwx-wXcFNq9z2O4cfhzAHSULQNDrwCp88vcvgU-617pgcg1/exec",
+ const SETTINGS_WEB_APP_URL =
+  "https://script.google.com/macros/s/AKfycbwMeEFV6BOvtfxLRYAxmUVpVTiPSoozX2sDT6_O3Eyubuu3gnuTtHGB38ojGmPrsYI/exec";
 
-  // ΠΡΟΣΟΧΗ:
-  // Κρατάμε εδώ τη φόρμα που έχει τα πεδία κυβερνήτη/πληρώματος.
-  // Αν φτιάξεις αντίγραφο Jotform για ΕΠΙΔΑΥΡΟΣ, βάλε εδώ το νέο URL.
-JOTFORM_BASE_URL: "https://form.jotform.com/262071396138358",
-   CREW_CHANGE_FORM_URL: "https://form.jotform.com/261776318640361",
+// Το μοναδικό αναγνωριστικό του αρχείου ΣΥΜΜΕΤΟΧΕΣ/ΡΥΘΜΙΣΕΙΣ για τον αγώνα.
+// Μπορεί να αντικατασταθεί και από URL: ?settings=SPREADSHEET_ID
+const DEFAULT_SETTINGS_SPREADSHEET_ID =
+  "1bbgzYq5eL8XkchL1bcMXchlvxpVSVTL6aDYgptAnlmI";
 
-  EVENT_LOGO: "https://github.com/jsamartzis-png/logos/blob/main/logo_EntryFlow_removebg-preview.png?raw=true",
-  EVENT_BACKGROUND: "background.jpg",
- YEAR: "",
-  INFO_PHONE: "210 4101 113"
+const PAGE_PARAMS = new URLSearchParams(window.location.search);
+const SETTINGS_SPREADSHEET_ID = String(
+  PAGE_PARAMS.get("settings") || DEFAULT_SETTINGS_SPREADSHEET_ID
+).trim();
+
+function makeSettingsEndpoint() {
+  const params = new URLSearchParams({
+    action: "settings",
+    settings: SETTINGS_SPREADSHEET_ID
+  });
+
+  return SETTINGS_WEB_APP_URL + "?" + params.toString();
+}
+
+const CONFIG = {
+  RACE_PREFIX: "ΚΟΡΦΟΣ_2026",
+  EVENT_TITLE: "ΚΟΡΦΟΣ 2026",
+  RACE_DATE: "12 & 13 Σεπτεμβρίου 2026",
+  SUBMIT_EXPIRATION: "Αναμένεται",
+  SETTINGS_SPREADSHEET_ID: SETTINGS_SPREADSHEET_ID,
+  SETTINGS_ENDPOINT: makeSettingsEndpoint(),
+  OSR_RULE: "YES",
+  ORGANIZER_BANNER:
+    "https://drive.google.com/file/d/18JMPvaaQdiXi4ieFQstEIEuPW2hbvMQh/view?usp=sharing",
+  ORGANIZER_NAME: "ΝΑΥΤΙΚΟΣ ΟΜΙΛΟΣ ΤΖΙΤΖΙΦΙΩΝ ΚΑΛΛΙΘΕΑΣ",
+  ORGANIZER_SHORT_NAME: "ΝΟΤΚ",
+  ORGANIZER_EMAIL: "info@notk.gr",
+  ORGANIZER_TEL: "210 481-0390 - 391",
+  SHOW_RACE_TITLE: "YES",
+  JOTFORM_FORM_ID: "262082834084357",
+  JOTFORM_BASE_URL: "https://form.jotform.com/262082834084357",
+
+  // Εξειδικευμένο endpoint αναζήτησης/ενημέρωσης αλλαγής πληρώματος.
+  BOAT_LOOKUP_URL:
+    "https://script.google.com/macros/s/AKfycbz_DEBymT_KEkYxVPA3iIGlIkKoLUNDhowmpMl-q16_Hdn7dFP1kKQB5ccrkT51bxQj/exec",
+  PERSON_LOOKUP_URL:
+    "https://script.google.com/macros/s/AKfycbw-zgZZeHRC6S5_f1xGkTwx-wXcFNq9z2O4cfhzAHSULQNDrwCp88vcvgU-617pgcg1/exec",
+
+  EVENT_LOGO:
+    "https://github.com/jsamartzis-png/logos/blob/main/logo_EntryFlow_removebg-preview.png?raw=true",
+  EVENT_BACKGROUND: "",
+  YEAR: "2026",
+  INFO_PHONE: "210 481-0390 - 391"
 };
+
+const SETTINGS_CACHE_KEY =
+  "entryflow_race_settings_" + SETTINGS_SPREADSHEET_ID;
 
 const BOAT_LOOKUP_URL = CONFIG.BOAT_LOOKUP_URL;
 const PERSON_LOOKUP_URL = CONFIG.PERSON_LOOKUP_URL;
-const JOTFORM_BASE_URL = CONFIG.JOTFORM_BASE_URL;
-const CREW_CHANGE_FORM_URL = CONFIG.CREW_CHANGE_FORM_URL;
 const EVENT_LOGO = CONFIG.EVENT_LOGO;
 const EVENT_BACKGROUND = CONFIG.EVENT_BACKGROUND;
 let EVENT_TITLE = CONFIG.EVENT_TITLE;
@@ -939,15 +997,14 @@ let EVENT_TITLE = CONFIG.EVENT_TITLE;
 const FORM_OPEN = true;
 const CLOSED_MESSAGE = "Ο αγώνας έχει κλείσει και δεν δέχεται πλέον συμμετοχές.";
 
-// Χρησιμοποιείται όταν ο χρήστης πατήσει από τη Jotform
-// «Επιστροφή για αλλαγή πληρώματος».
+// Χρησιμοποιείται όταν ο χρήστης επιστρέφει για αλλαγή πληρώματος.
 const STORAGE_KEY =
   "entryFlow_crew_state_" +
   window.location.pathname.replace(/[^a-zA-Z0-9]+/g, "_");
 
     const EVENT_NOTES = [
   "Με τη χρήση αυτής της εφαρμογής, μπορείτε εύκολα να υποβάλετε τα απαραίτητα έγγραφα και να ολοκληρώσετε την πληρωμή του παραβόλου (όλα σε ένα σημείο).",
-  'Διαβάστε την <a href="https://docs.google.com/document/d/1_ThpUPcy-w1-D5hScVCcKZ2csmjs6_m-mIkEYNY9c5I/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Πολιτική Απορρήτου</a> και τους <a href="https://docs.google.com/document/d/1Btn0eMNSZotVyH3n7RETC3ur8lZ4V_2I/edit?usp=sharing&ouid=115039995651229449950&rtpof=true&sd=true" target="_blank" rel="noopener noreferrer">Όρους Χρήσης</a>.'
+  'Διαβάστε την <a href="https://docs.google.com/document/d/1aP3O1rDXvF34k3bMuvAyAGDb0cy8iMFkDiL-hEfUqxI/edit?tab=t.0" target="_blank" rel="noopener noreferrer">Πολιτική Απορρήτου</a> και τους <a href="https://docs.google.com/document/d/1S6QrNvvRq2drWWLfrsZxzOuM89Rf-lY0IznZcwzVUz4/edit?tab=t.0" target="_blank" rel="noopener noreferrer">Όρους Χρήσης</a>.'
 ];
 
  const NOTICE_YEAR_TEXT =
@@ -1061,7 +1118,9 @@ wosr_member_2: "wosr_member_2"
 
     function setupHero() {
       document.getElementById("eventLogo").src = EVENT_LOGO;
-      document.getElementById("heroBg").style.backgroundImage = "url('" + EVENT_BACKGROUND + "')";
+      document.getElementById("heroBg").style.backgroundImage = EVENT_BACKGROUND
+        ? "url('" + EVENT_BACKGROUND + "')"
+        : "none";
       document.getElementById("eventTitle").textContent = EVENT_TITLE;
       document.getElementById("noticeYearText").textContent = NOTICE_YEAR_TEXT;
       document.getElementById("noticeInfoText").textContent = NOTICE_INFO_TEXT;
@@ -1075,96 +1134,292 @@ wosr_member_2: "wosr_member_2"
         notesList.appendChild(li);
       });
     }
-function loadRaceSettingsFromSheet() {
-    // Άμεση αρχική εμφάνιση μέχρι να φορτωθούν οι ΡΥΘΜΙΣΕΙΣ
-const fallbackRaceTitle =
-  "9ο Κύπελλο Καλλιθέας 2026";
+function normalizeJotformUrl(url, formId) {
+  let value = String(url || "").trim();
+  const id = String(formId || "").replace(/\D/g, "");
 
-const fallbackRaceDate =
-  "12 & 13 Σεπτεμβρίου 2026";
+  if (!value && id) value = "https://form.jotform.com/" + id;
+  if (!value) return "";
 
-const fallbackRaceYear =
-  "2026";
-  const eventTitleEl = document.getElementById("eventTitle");
-  if (eventTitleEl) {
-    eventTitleEl.textContent = fallbackRaceTitle;
+  return value.split("?")[0].replace(/\/+$/, "");
+}
+
+function extractGoogleDriveFileId(url) {
+  const value = String(url || "").trim();
+  if (!value) return "";
+
+  const patterns = [
+    /\/file\/d\/([a-zA-Z0-9_-]+)/,
+    /[?&]id=([a-zA-Z0-9_-]+)/,
+    /\/d\/([a-zA-Z0-9_-]+)(?:=|\/|$)/
+  ];
+
+  for (const pattern of patterns) {
+    const match = value.match(pattern);
+    if (match && match[1]) return match[1];
   }
+
+  return "";
+}
+
+function getDriveImageCandidates(url) {
+  const value = String(url || "").trim();
+  if (!value) return [];
+
+  const fileId = extractGoogleDriveFileId(value);
+  if (!fileId) return [value];
+
+  return [
+    "https://drive.google.com/thumbnail?id=" + encodeURIComponent(fileId) + "&sz=w2000",
+    "https://drive.google.com/uc?export=view&id=" + encodeURIComponent(fileId)
+  ];
+}
+
+function showOrganizerBanner(url) {
+  const box = document.getElementById("organizerBannerBox");
+  const image = document.getElementById("organizerBanner");
+  if (!box || !image) return;
+
+  const candidates = getDriveImageCandidates(url);
+  if (!candidates.length) {
+    box.style.display = "none";
+    image.removeAttribute("src");
+    return;
+  }
+
+  let candidateIndex = 0;
+  image.referrerPolicy = "no-referrer";
+  image.onload = function () {
+    box.style.display = "block";
+  };
+  image.onerror = function () {
+    candidateIndex += 1;
+    if (candidateIndex < candidates.length) {
+      image.src = candidates[candidateIndex];
+    } else {
+      box.style.display = "none";
+      image.removeAttribute("src");
+    }
+  };
+
+  image.src = candidates[candidateIndex];
+}
+
+function renderRaceSettings() {
+  const title = String(CONFIG.EVENT_TITLE || "").trim();
+  const raceDate = String(CONFIG.RACE_DATE || "").trim();
+
+  EVENT_TITLE = title;
+
+  const yearMatch = (title + " " + raceDate).match(/\b20\d{2}\b/);
+  if (yearMatch) CONFIG.YEAR = yearMatch[0];
+
+  const eventTitleEl = document.getElementById("eventTitle");
+  if (eventTitleEl) eventTitleEl.textContent = title;
 
   const introRaceTitleEl = document.getElementById("introRaceTitle");
   if (introRaceTitleEl) {
-    introRaceTitleEl.textContent = fallbackRaceTitle;
+    introRaceTitleEl.textContent = title;
+    const showTitle = String(CONFIG.SHOW_RACE_TITLE || "YES")
+      .trim()
+      .toUpperCase();
+    introRaceTitleEl.style.display =
+      showTitle === "NO" || showTitle === "OXI" || showTitle === "ΟΧΙ"
+        ? "none"
+        : "block";
   }
 
   const introRaceDateEl = document.getElementById("introRaceDate");
   if (introRaceDateEl) {
-    introRaceDateEl.textContent =
-      "Ημερομηνία διεξαγωγής του αγώνα: " + fallbackRaceDate;
+    introRaceDateEl.textContent = raceDate
+      ? "Ημερομηνία διεξαγωγής του αγώνα: " + raceDate
+      : "";
+  }
+
+  const heroBg = document.getElementById("heroBg");
+  if (heroBg) {
+    heroBg.style.backgroundImage = CONFIG.EVENT_BACKGROUND
+      ? "url('" + CONFIG.EVENT_BACKGROUND + "')"
+      : "none";
   }
 
   const noticeYearTextEl = document.getElementById("noticeYearText");
   if (noticeYearTextEl) {
     noticeYearTextEl.textContent =
       "Για να συνεχίσετε θα πρέπει να έχετε πιστοποιητικό της Εθνικής Αρχής για το έτος " +
-      fallbackRaceYear +
+      CONFIG.YEAR +
       ".";
   }
 
-  document.title = "Αλλαγή Πληρώματος - " + fallbackRaceTitle;
-  if (!CONFIG.SETTINGS_ENDPOINT) return;
+  const noticeInfoTextEl = document.getElementById("noticeInfoText");
+  if (noticeInfoTextEl) {
+    const phone = CONFIG.ORGANIZER_TEL || CONFIG.INFO_PHONE || "";
+    noticeInfoTextEl.textContent = phone
+      ? "Για πληροφορίες: ΓΡΑΜΜΑΤΕΙΑ ΑΓΩΝΑ ΤΗΛ.: " + phone
+      : "";
+  }
 
-  window.applyRaceSettings = function (data) {
-    if (!data || data.success === false) return;
+  showOrganizerBanner(CONFIG.ORGANIZER_BANNER);
+  document.title = title
+    ? "Αλλαγή Πληρώματος - " + title
+    : "Αλλαγή Πληρώματος";
+}
 
-    if (data.raceTitle) {
-      CONFIG.EVENT_TITLE = data.raceTitle;
-      EVENT_TITLE = data.raceTitle;
+function applyRaceSettingsData(data) {
+  if (!data || data.success === false) return false;
 
-      const eventTitleEl = document.getElementById("eventTitle");
-      if (eventTitleEl) {
-        eventTitleEl.textContent = data.raceTitle;
-      }
+  CONFIG.RACE_PREFIX = data.racePrefix || CONFIG.RACE_PREFIX;
+  CONFIG.EVENT_TITLE = data.raceTitle || CONFIG.EVENT_TITLE;
+  CONFIG.RACE_DATE = data.raceDate || CONFIG.RACE_DATE;
+  CONFIG.SUBMIT_EXPIRATION =
+    data.submitExpiration || CONFIG.SUBMIT_EXPIRATION;
+  CONFIG.ORGANIZER_BANNER =
+    data.organizerBanner || CONFIG.ORGANIZER_BANNER;
+  CONFIG.ORGANIZER_NAME = data.organizerName || CONFIG.ORGANIZER_NAME;
+  CONFIG.ORGANIZER_SHORT_NAME =
+    data.organizerShortName || CONFIG.ORGANIZER_SHORT_NAME;
+  CONFIG.ORGANIZER_EMAIL = data.organizerEmail || CONFIG.ORGANIZER_EMAIL;
+  CONFIG.ORGANIZER_TEL = data.organizerTel || CONFIG.ORGANIZER_TEL;
+  CONFIG.INFO_PHONE = CONFIG.ORGANIZER_TEL || CONFIG.INFO_PHONE;
+  CONFIG.SHOW_RACE_TITLE = String(
+    data.showRaceTitle || CONFIG.SHOW_RACE_TITLE || "YES"
+  )
+    .trim()
+    .toUpperCase();
+  CONFIG.OSR_RULE = String(
+    data.osrRule || CONFIG.OSR_RULE || "NONE"
+  )
+    .trim()
+    .toUpperCase();
 
-      const introRaceTitleEl = document.getElementById("introRaceTitle");
-      if (introRaceTitleEl) {
-        introRaceTitleEl.textContent = data.raceTitle;
-      }
+  const jotformId =
+    data.jotformFormId || data.jotformId || CONFIG.JOTFORM_FORM_ID;
+  const jotformUrl =
+    data.jotformFormUrl || data.jotformUrl || CONFIG.JOTFORM_BASE_URL;
 
-      document.title = "Αλλαγή Πληρώματος - " + data.raceTitle;
+  CONFIG.JOTFORM_FORM_ID = String(jotformId || "").trim();
+  CONFIG.JOTFORM_BASE_URL = normalizeJotformUrl(
+    jotformUrl,
+    CONFIG.JOTFORM_FORM_ID
+  );
 
-      if (data.raceDate) {
-        const introRaceDateEl = document.getElementById("introRaceDate");
+  renderRaceSettings();
+  return true;
+}
 
-        if (introRaceDateEl) {
-          introRaceDateEl.textContent =
-            "Ημερομηνία διεξαγωγής του αγώνα: " + data.raceDate;
-        }
-      }
+function readCachedRaceSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_CACHE_KEY);
+    if (!raw) return null;
 
-      const yearMatch = String(data.raceTitle).match(/\b20\d{2}\b/);
+    const cached = JSON.parse(raw);
+    return cached && cached.data ? cached.data : null;
+  } catch (error) {
+    console.warn("Δεν ήταν δυνατή η ανάγνωση cache ρυθμίσεων:", error);
+    return null;
+  }
+}
 
-      if (yearMatch) {
-        CONFIG.YEAR = yearMatch[0];
+function saveCachedRaceSettings(data) {
+  try {
+    localStorage.setItem(
+      SETTINGS_CACHE_KEY,
+      JSON.stringify({ savedAt: Date.now(), data: data })
+    );
+  } catch (error) {
+    console.warn("Δεν ήταν δυνατή η αποθήκευση cache ρυθμίσεων:", error);
+  }
+}
 
-        const noticeYearTextEl =
-          document.getElementById("noticeYearText");
+function loadJsonp(url, timeoutMs) {
+  return new Promise(function (resolve, reject) {
+    const callbackName =
+      "__entryflowCrewSettings_" +
+      Date.now() +
+      "_" +
+      Math.random().toString(36).slice(2);
+    const script = document.createElement("script");
+    let completed = false;
 
-        if (noticeYearTextEl) {
-          noticeYearTextEl.textContent =
-            "Για να συνεχίσετε θα πρέπει να έχετε πιστοποιητικό της Εθνικής Αρχής για το έτος " +
-            CONFIG.YEAR +
-            ".";
-        }
+    function cleanup() {
+      if (script.parentNode) script.parentNode.removeChild(script);
+      try {
+        delete window[callbackName];
+      } catch (_) {
+        window[callbackName] = undefined;
       }
     }
-  };
 
-  const script = document.createElement("script");
-  script.src =
-    CONFIG.SETTINGS_ENDPOINT +
-    "&callback=applyRaceSettings";
+    const timer = window.setTimeout(function () {
+      if (completed) return;
+      completed = true;
+      cleanup();
+      reject(new Error("Χρονικό όριο φόρτωσης ρυθμίσεων."));
+    }, timeoutMs || 10000);
 
-  document.body.appendChild(script);
+    window[callbackName] = function (data) {
+      if (completed) return;
+      completed = true;
+      window.clearTimeout(timer);
+      cleanup();
+      resolve(data);
+    };
+
+    script.async = true;
+    script.referrerPolicy = "no-referrer";
+    script.onerror = function () {
+      if (completed) return;
+      completed = true;
+      window.clearTimeout(timer);
+      cleanup();
+      reject(new Error("Αποτυχία φόρτωσης του endpoint ρυθμίσεων."));
+    };
+
+    const separator = url.includes("?") ? "&" : "?";
+    script.src =
+      url +
+      separator +
+      "callback=" +
+      encodeURIComponent(callbackName) +
+      "&_=" +
+      Date.now();
+
+    document.head.appendChild(script);
+  });
 }
+
+async function loadRaceSettingsFromSheet() {
+  // Οι σωστές τιμές του Κόρφου εμφανίζονται αμέσως.
+  renderRaceSettings();
+
+  const cached = readCachedRaceSettings();
+  if (cached) applyRaceSettingsData(cached);
+
+  if (!CONFIG.SETTINGS_ENDPOINT || !CONFIG.SETTINGS_SPREADSHEET_ID) {
+    return cached || null;
+  }
+
+  try {
+    const data = await loadJsonp(CONFIG.SETTINGS_ENDPOINT, 10000);
+    if (applyRaceSettingsData(data)) saveCachedRaceSettings(data);
+    return data;
+  } catch (firstError) {
+    console.warn("1η προσπάθεια ρυθμίσεων απέτυχε:", firstError);
+
+    try {
+      const data = await loadJsonp(CONFIG.SETTINGS_ENDPOINT, 10000);
+      if (applyRaceSettingsData(data)) saveCachedRaceSettings(data);
+      return data;
+    } catch (secondError) {
+      console.warn(
+        "Οι ΡΥΘΜΙΣΕΙΣ δεν φορτώθηκαν από το δίκτυο. Χρησιμοποιούνται οι άμεσες/αποθηκευμένες τιμές:",
+        secondError
+      );
+      return cached || null;
+    }
+  }
+}
+
     function setStatus(message, isError = false, isLoading = false, shouldScroll = false) {
       if (isLoading) {
         statusBox.classList.add("loading");
@@ -1869,6 +2124,8 @@ params.set("wosrMember2", wosrMember2);
   });
 }
 async function continueToForm() {
+  await settingsReadyPromise.catch(function () { return null; });
+
   const acceptTerms =
     document.getElementById("acceptTermsCheck");
 
@@ -2098,7 +2355,7 @@ async function continueToForm() {
     }
 
        setupHero();
-    loadRaceSettingsFromSheet();
+    const settingsReadyPromise = loadRaceSettingsFromSheet();
     if (FORM_OPEN === false) {
       document.querySelector(".hero").style.display = "none";
       document.querySelector(".separator").style.display = "none";
