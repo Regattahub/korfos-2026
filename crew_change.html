@@ -970,9 +970,8 @@ const CONFIG = {
   JOTFORM_FORM_ID: "262082834084357",
   JOTFORM_BASE_URL: "https://form.jotform.com/262082834084357",
 
-  // Εξειδικευμένο endpoint αναζήτησης/ενημέρωσης αλλαγής πληρώματος.
-  BOAT_LOOKUP_URL:
-    "https://script.google.com/macros/s/AKfycbz_DEBymT_KEkYxVPA3iIGlIkKoLUNDhowmpMl-q16_Hdn7dFP1kKQB5ccrkT51bxQj/exec",
+  // Η αλλαγή πληρώματος χρησιμοποιεί το ίδιο δημόσιο Web App του αγώνα.
+  BOAT_LOOKUP_URL: SETTINGS_WEB_APP_URL,
   PERSON_LOOKUP_URL:
     "https://script.google.com/macros/s/AKfycbw-zgZZeHRC6S5_f1xGkTwx-wXcFNq9z2O4cfhzAHSULQNDrwCp88vcvgU-617pgcg1/exec",
 
@@ -1892,11 +1891,14 @@ function boatLookupJsonp(sailNumber, modificationCode) {
     script.src =
       BOAT_LOOKUP_URL +
       separator +
-     "id=" +
-encodeURIComponent(sailNumber) +
-"&modificationCode=" +
-encodeURIComponent(modificationCode) +
-"&callback=" +
+      "action=boatLookup" +
+      "&settings=" +
+      encodeURIComponent(SETTINGS_SPREADSHEET_ID) +
+      "&id=" +
+      encodeURIComponent(sailNumber) +
+      "&modificationCode=" +
+      encodeURIComponent(modificationCode) +
+      "&callback=" +
       encodeURIComponent(callbackName) +
       "&_=" +
       Date.now();
@@ -2064,6 +2066,7 @@ setStatus("Η αναζήτηση ολοκληρώθηκε.");
     const params = new URLSearchParams();
 
     params.set("action", "updateCrew");
+    params.set("settings", SETTINGS_SPREADSHEET_ID);
     params.set("id", sailNumber);
     params.set("modificationCode", modificationCode);
     params.set("submissionId", submissionId);
