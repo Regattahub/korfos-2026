@@ -3150,7 +3150,9 @@ async function lookupAddedCrewMember(input) {
   console.error(err);
 
   tr.dataset.cardStatus = "error";
-  statusEl.innerText = "✖ ΣΦΑΛΜΑ";
+ statusEl.innerText =
+  "✖ Το δελτίο που καταχωρήσατε δεν υπάρχει. " +
+  "Παρακαλούμε καταχωρήστε ενεργό αθλητικό δελτίο.";
   statusEl.style.color = "#b00020";
   statusEl.style.fontWeight = "bold";
 } finally {
@@ -3206,7 +3208,9 @@ refreshWosrSelectors();
       clubEl.innerText = "";
 
       if (statusEl) {
-        statusEl.innerText = "✖ Το δελτίο δεν βρέθηκε. Παρακαλούμε ελέγξτε τον αριθμό.";
+      statusEl.innerText =
+  "✖ Το δελτίο που καταχωρήσατε δεν υπάρχει. " +
+  "Παρακαλούμε καταχωρήστε ενεργό αθλητικό δελτίο.";
         statusEl.style.color = "#b00020";
       }
 
