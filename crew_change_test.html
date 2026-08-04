@@ -881,12 +881,55 @@ body.jotform-open #formFrame {
     Για μεμονωμένη προσθήκη, πατήστε το κουμπί <strong>+ Προσθήκη μέλους</strong>.
   </div>
 
+<div id="singleCrewEntryBox"
+     style="display:none; max-width:520px; margin:18px auto; padding:16px;
+            border:1px solid #bfb6aa; background:#fffdf2; border-radius:7px;">
+
+  <div style="font-weight:bold; text-align:center; margin-bottom:10px;">
+    ΠΡΟΣΘΗΚΗ ΝΕΟΥ ΜΕΛΟΥΣ
+  </div>
+
+  <div style="display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap;">
+
+    <input
+      id="newCrewCardInput"
+      type="text"
+      inputmode="numeric"
+      placeholder="Αριθμός δελτίου"
+      style="width:180px; height:42px; font-size:17px; text-align:center;
+             border:2px solid #0d5e92; border-radius:6px;"
+    >
+
+    <button
+      class="btn"
+      type="button"
+      onclick="searchAndAddCrewMember()"
+      style="min-width:150px;"
+    >
+      🔍 ΑΝΑΖΗΤΗΣΗ
+    </button>
+
+  </div>
+
+  <div id="newCrewSearchStatus"
+       style="min-height:24px; margin-top:10px; font-weight:bold; text-align:center;">
+  </div>
+
+</div>
+
 <div id="crewList"></div>
 
-<div id="addCrewButtonBox" style="text-align:center; margin:12px 0 14px 0;">
-  <button class="btn secondary" type="button" onclick="addCrewMemberSafe()">
-    + Προσθήκη μέλους
+<div id="addCrewButtonBox"
+     style="text-align:center; margin:12px 0 14px 0;">
+
+  <button
+    class="btn secondary"
+    type="button"
+    onclick="showNewCrewEntry()"
+  >
+    + ΠΡΟΣΘΗΚΗ ΜΕΛΟΥΣ
   </button>
+
 </div>
 
 <div id="wosrSelectBox" style="display:none; margin:16px auto 10px auto; padding:12px; border:1px solid #bfb6aa; background:#f8f8f8; max-width:620px; text-align:left;">
@@ -3313,11 +3356,10 @@ function addCrewMember() {
       <table id="crewTable" style="width:100%; border-collapse:collapse; font-size:15px; margin-top:14px;">
         <thead>
           <tr style="background:#f1f4ef;">
-            <th style="border:1px solid #bfb6aa; padding:6px; width:45px;">Α/Α</th>
             <th style="border:1px solid #bfb6aa; padding:6px;">ΔΕΛΤΙΟ</th>
             <th style="border:1px solid #bfb6aa; padding:6px;">ΟΝΟΜΑ</th>
             <th style="border:1px solid #bfb6aa; padding:6px;">ΟΜΙΛΟΣ</th>
-          <th style="border:1px solid #bfb6aa; padding:6px; width:130px;">ΕΝΕΡΓΕΙΑ</th>
+            <th style="border:1px solid #bfb6aa; padding:6px; width:130px;">ΕΝΕΡΓΕΙΑ</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -3331,33 +3373,66 @@ function addCrewMember() {
   const tr = document.createElement("tr");
 
   tr.innerHTML = `
-    <td class="rowNo" style="border:1px solid #bfb6aa; padding:6px; text-align:center;"></td>
     <td style="border:1px solid #bfb6aa; padding:6px;">
-     <input type="text" placeholder="19012" style="width:75px; height:36px; font-size:16px; text-align:center;">
-      <div class="personStatus" style="font-weight:bold; margin-top:6px; font-size:12px;"></div>
+      <input
+        type="text"
+        placeholder="19012"
+        style="width:75px; height:36px; font-size:16px; text-align:center;"
+      >
+      <div
+        class="personStatus"
+        style="font-weight:bold; margin-top:6px; font-size:12px;"
+      ></div>
     </td>
-    <td style="border:1px solid #bfb6aa; padding:6px;"><span class="name"></span></td>
-    <td style="border:1px solid #bfb6aa; padding:6px;"><span class="club"></span></td>
-   <td style="border:1px solid #bfb6aa; padding:6px; text-align:center;">
-<button type="button"
+
+    <td style="border:1px solid #bfb6aa; padding:6px;">
+      <span class="name"></span>
+    </td>
+
+    <td style="border:1px solid #bfb6aa; padding:6px;">
+      <span class="club"></span>
+    </td>
+
+    <td style="border:1px solid #bfb6aa; padding:6px; text-align:center;">
+      <button
+        type="button"
         class="crewSearchBtn"
         onclick="lookupPerson(this.closest('tr').querySelector('input'))"
-        style="background:#f1f4ef; color:#2f241d; border:1px solid #bfb6aa; padding:6px 8px; font-weight:bold; cursor:pointer; font-size:12px; white-space:nowrap;">
-  🔍 ΑΝΑΖΗΤΗΣΗ ΜΕΛΟΥΣ
-</button>
+        style="background:#f1f4ef; color:#2f241d; border:1px solid #bfb6aa; padding:6px 8px; font-weight:bold; cursor:pointer; font-size:12px; white-space:nowrap;"
+      >
+        🔍 ΑΝΑΖΗΤΗΣΗ ΜΕΛΟΥΣ
+      </button>
 
- <button type="button"
+      <button
+        type="button"
         onclick="deleteCrewRow(this)"
-        style="color:#b00020; background:#fff; border:1px solid #bfb6aa; padding:6px 8px; font-weight:bold; cursor:pointer; font-size:12px; white-space:nowrap; margin-top:4px;">
-  ✖ ΔΙΑΓΡΑΦΗ
-</button>
-</td>
+        style="color:#b00020; background:#fff; border:1px solid #bfb6aa; padding:6px 8px; font-weight:bold; cursor:pointer; font-size:12px; white-space:nowrap; margin-top:4px;"
+      >
+        ✖ ΔΙΑΓΡΑΦΗ
+      </button>
+    </td>
   `;
 
   tbody.appendChild(tr);
   renumberCrewRows();
 }
+    function showNewCrewEntry() {
+  const entryBox = document.getElementById("singleCrewEntryBox");
+  const cardInput = document.getElementById("newCrewCardInput");
+  const statusEl = document.getElementById("newCrewSearchStatus");
 
+  if (!entryBox || !cardInput) return;
+
+  entryBox.style.display = "block";
+  cardInput.value = "";
+
+  if (statusEl) {
+    statusEl.innerText = "";
+    statusEl.style.color = "";
+  }
+
+  cardInput.focus();
+}
 function addCrewMemberSafe() {
   const rows = document.querySelectorAll("#crewTable tbody tr");
 
