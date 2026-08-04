@@ -1916,6 +1916,14 @@ if (osrRequired) {
       console.log("JOTFORM PREFILL URL:", formUrl);
 //alert(buildCrewTextForPdf());
 
+      const openJotformDirectly =
+  window.matchMedia("(max-width: 1024px)").matches ||
+  /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+if (openJotformDirectly) {
+  window.location.assign(formUrl);
+  return;
+}
  formFrame.src = formUrl;
 formWrap.style.display = "block";
 
@@ -1923,6 +1931,7 @@ document.body.classList.add("jotform-open");
 document.documentElement.classList.add("jotform-open-html");
 
 window.scrollTo({ top: 0, behavior: "auto" });
+      
     }
     function resetSearch() {
       localStorage.removeItem(getStorageKey());
