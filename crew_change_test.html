@@ -3106,17 +3106,24 @@ async function searchAndAddAddedCrewMember() {
   const card = String(cardInput.value || "").trim();
 
   if (!card) {
-    statusEl.innerText = "Παρακαλούμε συμπληρώστε αριθμό αθλητικού δελτίου.";
+    statusEl.innerText =
+      "Παρακαλούμε συμπληρώστε αριθμό αθλητικού δελτίου.";
     statusEl.style.color = "#b00020";
     cardInput.focus();
     return;
   }
 
-  const existingRows = document.querySelectorAll("#addedCrewTable tbody tr");
+  const existingRows =
+    document.querySelectorAll("#addedCrewTable tbody tr");
+
   for (const row of existingRows) {
-    const existingCard = String(row.querySelector("input")?.value || "").trim();
+    const existingCard = String(
+      row.querySelector("input")?.value || ""
+    ).trim();
+
     if (existingCard === card) {
-      statusEl.innerText = "Το συγκεκριμένο δελτίο έχει ήδη προστεθεί.";
+      statusEl.innerText =
+        "Το συγκεκριμένο δελτίο έχει ήδη προστεθεί.";
       statusEl.style.color = "#b00020";
       return;
     }
@@ -3127,31 +3134,40 @@ async function searchAndAddAddedCrewMember() {
 
   try {
     const res = await fetch(
-      PERSON_LOOKUP_URL + "?type=person&id=" + encodeURIComponent(card)
+      PERSON_LOOKUP_URL +
+      "?type=person&id=" +
+      encodeURIComponent(card)
     );
+
     const json = await res.json();
 
     if (!json.found || !json.data) {
       statusEl.innerText =
         "✖ Το δελτίο που καταχωρήσατε δεν υπάρχει. " +
         "Παρακαλούμε καταχωρήστε ενεργό αθλητικό δελτίο.";
+
       statusEl.style.color = "#b00020";
       return;
     }
 
     const data = json.data || {};
     const athleteStatus = String(data.status || "").trim();
-    const isValid = athleteStatus === "Active" || athleteStatus === "";
+
+    const isValid =
+      athleteStatus === "Active" ||
+      athleteStatus === "";
 
     if (!isValid) {
       statusEl.innerText =
         "✖ Το δελτίο που καταχωρήσατε δεν είναι ενεργό. " +
         "Παρακαλούμε καταχωρήστε ενεργό αθλητικό δελτίο.";
+
       statusEl.style.color = "#b00020";
       return;
     }
 
     const table = ensureAddedCrewTable();
+
     if (!table) {
       throw new Error("Δεν δημιουργήθηκε ο πίνακας νέων μελών.");
     }
@@ -3166,7 +3182,7 @@ async function searchAndAddAddedCrewMember() {
       <td style="border:1px solid #bfb6aa; padding:6px; text-align:center;">
         <input
           type="text"
-          value="${escapeHtml(card)}"
+          value="${card}"
           readonly
           style="width:78px; height:34px; font-size:15px; text-align:center;
                  border:0; background:transparent; font-weight:bold;"
@@ -3174,11 +3190,11 @@ async function searchAndAddAddedCrewMember() {
       </td>
 
       <td style="border:1px solid #bfb6aa; padding:6px;">
-        <span class="name">${escapeHtml(data.name || "")}</span>
+        <span class="name">${data.name || ""}</span>
       </td>
 
       <td style="border:1px solid #bfb6aa; padding:6px;">
-        <span class="club">${escapeHtml(shortClubName(data.club || ""))}</span>
+        <span class="club">${shortClubName(data.club || "")}</span>
       </td>
 
       <td style="border:1px solid #bfb6aa; padding:4px; text-align:center; width:42px;">
@@ -3199,6 +3215,7 @@ async function searchAndAddAddedCrewMember() {
 
     statusEl.innerText = "✓ Το μέλος προστέθηκε επιτυχώς.";
     statusEl.style.color = "#2e7d32";
+
     cardInput.value = "";
 
     if (entryBox) {
@@ -3209,12 +3226,13 @@ async function searchAndAddAddedCrewMember() {
 
   } catch (err) {
     console.error(err);
+
     statusEl.innerText =
       "✖ Σφάλμα επικοινωνίας. Παρακαλούμε δοκιμάστε ξανά.";
+
     statusEl.style.color = "#b00020";
   }
 }
-
 /*
  * Διατηρείται για συμβατότητα με τυχόν παλιές κλήσεις.
  * Η νέα ροή ανοίγει πρώτα το πεδίο αναζήτησης.
