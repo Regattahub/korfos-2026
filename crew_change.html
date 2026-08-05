@@ -716,6 +716,43 @@ body.jotform-open #formFrame {
         margin: 14px auto 18px auto;
       }
     }
+
+/* ΟΘΟΝΗ ΑΝΑΜΟΝΗΣ ΜΕΧΡΙ ΝΑ ΑΝΟΙΞΕΙ Η JOTFORM */
+#jotformLoadingOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000000;
+  background: rgba(255,255,255,0.94);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+#jotformLoadingOverlay.is-visible {
+  display: flex;
+}
+
+#jotformLoadingOverlay .loading-card {
+  padding: 26px 30px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.16);
+  color: #2f241d;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+#jotformLoadingOverlay .loading-spinner {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px auto;
+  border: 6px solid rgba(13,94,146,0.18);
+  border-top-color: #0d5e92;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
   </style>
 </head>
 <body>
@@ -922,6 +959,15 @@ body.jotform-open #formFrame {
       <div class="form-wrap" id="formWrap">
         <iframe id="formFrame" src="" title="Καταχώριση συμμετοχής"></iframe>
       </div>
+    </div>
+  </div>
+
+
+  <div id="jotformLoadingOverlay" role="status" aria-live="polite" aria-hidden="true">
+    <div class="loading-card">
+      <div class="loading-spinner"></div>
+      <div>Παρακαλούμε περιμένετε…</div>
+      <div style="font-size:14px; font-weight:500; margin-top:8px;">Ανοίγει η σελίδα καταχώρισης.</div>
     </div>
   </div>
 
@@ -2126,6 +2172,20 @@ params.set("wosrMember2", wosrMember2);
     document.body.appendChild(script);
   });
 }
+function showJotformLoading() {
+  const overlay = document.getElementById("jotformLoadingOverlay");
+  if (!overlay) return;
+  overlay.classList.add("is-visible");
+  overlay.setAttribute("aria-hidden", "false");
+}
+
+function hideJotformLoading() {
+  const overlay = document.getElementById("jotformLoadingOverlay");
+  if (!overlay) return;
+  overlay.classList.remove("is-visible");
+  overlay.setAttribute("aria-hidden", "true");
+}
+
 async function continueToForm() {
   await settingsReadyPromise.catch(function () { return null; });
 
@@ -2189,6 +2249,8 @@ async function continueToForm() {
     document.getElementById("continueToJotformBtn");
 
   try {
+    showJotformLoading();
+
     if (continueButton) {
       continueButton.disabled = true;
       continueButton.textContent = "ΑΠΟΘΗΚΕΥΣΗ...";
@@ -2228,6 +2290,7 @@ async function continueToForm() {
       true
     );
 
+    formFrame.addEventListener("load", hideJotformLoading, { once: true });
     formFrame.src = editUrl;
     formWrap.style.display = "block";
 
@@ -2242,6 +2305,7 @@ async function continueToForm() {
     });
 
   } catch (error) {
+    hideJotformLoading();
     console.error("Σφάλμα ενημέρωσης πληρώματος:", error);
 
     setStatus(
@@ -2888,7 +2952,7 @@ ${data.second_captain_name ? `
 </div>
     
     <div style="text-align:center; margin-top:22px;">
-  <button class="btn" type="button" onclick="validateCrewChangeBeforeSubmit()">
+  <button id="crewChangeSubmitBtn" class="btn" type="button" onclick="validateCrewChangeBeforeSubmit()">
     ΣΥΝΕΧΕΙΑ ΣΤΗΝ ΚΑΤΑΧΩΡΗΣΗ ΑΛΛΑΓΗΣ
   </button>
 </div>
@@ -3691,8 +3755,16 @@ if (changeWosr) {
 }
       
    const finalCrew = getFinalCrewCandidates();
+  const submitButton = document.getElementById("crewChangeSubmitBtn");
 
   try {
+    showJotformLoading();
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "ΠΑΡΑΚΑΛΟΥΜΕ ΠΕΡΙΜΕΝΕΤΕ...";
+    }
+
     setStatus(
       "Αποθηκεύονται οι αλλαγές πληρώματος...",
       false,
@@ -3728,6 +3800,13 @@ if (changeWosr) {
     window.location.href = editUrl;
 
   } catch (error) {
+    hideJotformLoading();
+
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = "ΣΥΝΕΧΕΙΑ ΣΤΗΝ ΚΑΤΑΧΩΡΗΣΗ ΑΛΛΑΓΗΣ";
+    }
+
     console.error(
       "Σφάλμα αποθήκευσης αλλαγής πληρώματος:",
       error
