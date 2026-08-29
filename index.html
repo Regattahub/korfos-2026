@@ -790,7 +790,7 @@ body.jotform-open #formFrame {
       </div>
 
       <div class="search-area">
-        <input type="text" id="sailNumber" placeholder="Αριθμός ιστίου" inputmode="numeric" />
+        <input type="text" id="sailNumber" placeholder="Αριθμός ιστίου" inputmode="text" autocapitalize="characters" />
         <button class="btn" id="searchBtn" type="button">ΑΝΑΖΗΤΗΣΗ</button>
       </div>
 
@@ -1037,7 +1037,7 @@ const CONFIG = {
   JOTFORM_BASE_URL: "https://form.jotform.com/262082834084357",
 
   BOAT_LOOKUP_URL:
-    "https://script.google.com/macros/s/AKfycbzOp-9gQ9xMZtb7GxrLcWW_Nc5yrBu7KbmqDVYlI3s1GQ3wJhmOCfKyaoKgvTfttI2v/exec",
+  "https://script.google.com/macros/s/AKfycbyfbhckUWvO9WS_frzEnuMYGLAEvYT6cuPfPa3mMfLHhK-MAlMV-SGHQoNbeA1ZO8Rlag/exec",
   PERSON_LOOKUP_URL:
     "https://script.google.com/macros/s/AKfycbw-zgZZeHRC6S5_f1xGkTwx-wXcFNq9z2O4cfhzAHSULQNDrwCp88vcvgU-617pgcg1/exec",
 
@@ -1532,6 +1532,66 @@ wosr_member_2: "wosr_member_2"
       lastFoundData = null;
     }
 
+    function showMultipleBoatChoices(matches) {
+      const boats = Array.isArray(matches) ? matches : [];
+
+      lastFoundData = null;
+      actions.style.display = "none";
+      formWrap.style.display = "none";
+      formFrame.src = "";
+
+      const resultText = document.getElementById("resultText");
+      resultText.innerHTML = "";
+
+      const title = document.createElement("div");
+      title.style.fontWeight = "800";
+      title.style.fontSize = "18px";
+      title.style.marginBottom = "12px";
+      title.textContent =
+        "Βρέθηκαν περισσότερα από ένα σκάφη με αυτόν τον αριθμό ιστίου. Επιλέξτε το σωστό:";
+      resultText.appendChild(title);
+
+      const list = document.createElement("div");
+      list.style.display = "flex";
+      list.style.flexDirection = "column";
+      list.style.gap = "10px";
+      list.style.alignItems = "center";
+
+      boats.forEach(function (boat) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "btn";
+
+        const sailNo =
+          String(boat.sailno_full || "").trim() ||
+          (String(boat.sail_letters || "") + String(boat.sail_number || "")).trim();
+
+        const yachtName = String(boat.yacht_name || "").trim();
+
+        button.textContent =
+          (sailNo || "Χωρίς αριθμό") +
+          (yachtName ? " — " + yachtName : "");
+
+        button.style.width = "100%";
+        button.style.maxWidth = "520px";
+        button.style.height = "auto";
+        button.style.minHeight = "44px";
+        button.style.padding = "10px 14px";
+
+        button.addEventListener("click", function () {
+          lastFoundData = boat;
+          showResult(lastFoundData);
+          setStatus("Επιλέχθηκε το σωστό σκάφος.");
+        });
+
+        list.appendChild(button);
+      });
+
+      resultText.appendChild(list);
+      resultCard.style.display = "block";
+      scrollToElement(resultCard);
+    }
+
     
 function formatForJotformNumber(v) {
   if (v === null || typeof v === "undefined" || v === "") return "";
@@ -1806,11 +1866,12 @@ const SEP = "  ";
     async function searchBoat() {
       const acceptTerms = document.getElementById("acceptTermsCheck");
 
-if (acceptTerms && !acceptTerms.checked) {
-  alert("Παρακαλούμε αποδεχθείτε την Πολιτική Απορρήτου και τους Όρους Χρήσης για να συνεχίσετε.");
-  acceptTerms.scrollIntoView({ behavior: "smooth", block: "center" });
-  return;
-}
+      if (acceptTerms && !acceptTerms.checked) {
+        alert("Παρακαλούμε αποδεχθείτε την Πολιτική Απορρήτου και τους Όρους Χρήσης για να συνεχίσετε.");
+        acceptTerms.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
       const sailNumber = sailInput.value.trim();
 
       if (!sailNumber) {
@@ -1823,8 +1884,12 @@ if (acceptTerms && !acceptTerms.checked) {
       hideResult();
 
       try {
-       const response = await fetch(BOAT_LOOKUP_URL + "?id=" + encodeURIComponent(sailNumber));
-        const json = await response.json();
+        const json = await loadJsonp(
+          BOAT_LOOKUP_URL +
+            "?action=entryLookup&id=" +
+            encodeURIComponent(sailNumber),
+          10000
+        );
 
         if (!json.ok) {
           setStatus("Σφάλμα στο σύστημα αναζήτησης.", true, false, true);
@@ -1836,10 +1901,21 @@ if (acceptTerms && !acceptTerms.checked) {
           return;
         }
 
-      lastFoundData = json.data || {};
-console.log("DATA ΠΟΥ ΗΡΘΑΝ:", lastFoundData);
-showResult(lastFoundData);
-setStatus("Η αναζήτηση ολοκληρώθηκε.");
+        if (json.multiple && Array.isArray(json.matches) && json.matches.length > 1) {
+          showMultipleBoatChoices(json.matches);
+          setStatus(
+            "Βρέθηκαν " + json.matches.length + " σκάφη. Επιλέξτε το σωστό.",
+            false,
+            false,
+            true
+          );
+          return;
+        }
+
+        lastFoundData = json.data || {};
+        console.log("DATA ΠΟΥ ΗΡΘΑΝ:", lastFoundData);
+        showResult(lastFoundData);
+        setStatus("Η αναζήτηση ολοκληρώθηκε.");
       } catch (err) {
         console.error(err);
         setStatus("Σφάλμα επικοινωνίας με το σύστημα αναζήτησης.", true, false, true);
