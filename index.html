@@ -1771,8 +1771,19 @@ params.set(fieldNames.crew_json, JSON.stringify(
 }
 
 function shortClubName(club) {
-  return String(club || "")
+  const value = String(club || "")
     .replace(/\+/g, " ")
+    .trim();
+
+  const clubMap = {
+    "ΠΑΝΕΛΛΗΝΙΟΣ ΟΜΙΛΟΣ ΙΣΤΙΟΠΛΟΪΑΣ ΑΝΟΙΚΤΗΣ ΘΑΛΑΣΣΗΣ": "ΠΟΙΑΘ"
+  };
+
+  if (clubMap[value]) {
+    return clubMap[value];
+  }
+
+  return value
     .replace(/ΝΑΥΤΑΘΛΗΤΙΚΟΣ ΟΜΙΛΟΣ/g, "Ν.Ο.")
     .replace(/ΝΑΥΤΙΚΟΣ ΟΜΙΛΟΣ/g, "Ν.Ο.")
     .replace(/ΙΣΤΙΟΠΛΟΪΚΟΣ ΟΜΙΛΟΣ/g, "Ι.Ο.")
